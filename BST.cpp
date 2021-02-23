@@ -1,3 +1,4 @@
+#include <iostream>
 #include "BST.h"
 
 struct BST::Node
@@ -55,7 +56,120 @@ void BST::insert(KeyType key, ItemType item)
 
 void BST::insertRec(KeyType key, ItemType item, Node*& node)
 {
-    if (isLeaf(node) || key == node->key) node = new Node(key, item);
+    if (isLeaf(node)) node = new Node(key, item);
+    else if (key == node->key) {
+        node->key = key;
+        node->item = item;
+    }
     else if (key > node->key) this->insertRec(key, item, node->rightChild);
     else this->insertRec(key, item, node->leftChild);
+}
+
+void BST::displayEntries()
+{
+    this->displayEntriesRec(this->root);
+}
+
+void BST::displayEntriesRec(Node* pNode)
+{
+    if (this->isLeaf(pNode)) return;
+
+    if (!this->isLeaf(pNode->leftChild))
+        this->displayEntriesRec(pNode->leftChild);
+    else std::cout << "*" << std::endl;
+
+    std::cout << pNode->key << ": " << pNode->item << std::endl;
+
+    if (!this->isLeaf(pNode->rightChild))
+        this->displayEntriesRec(pNode->rightChild);
+    else std::cout << "*" << std::endl;
+}
+
+void BST::displayTree()
+{
+    this->displayTreeRec(this->root, 0);
+}
+
+void BST::displayTreeRec(Node* pNode, int indentLevel)
+{
+    if (this->isLeaf(pNode)) return;
+    std::cout << std::string(indentLevel, '\t');
+    std::cout << pNode->key << ": " << pNode->item << std::endl;
+
+    if (!this->isLeaf(pNode->leftChild))
+        this->displayTreeRec(pNode->leftChild, indentLevel + 1);
+    else {
+        std::cout << std::string(indentLevel + 1, '\t');
+        std::cout << "*" << std::endl;
+    }
+
+    if (!this->isLeaf(pNode->rightChild))
+        this->displayTreeRec(pNode->rightChild, indentLevel + 1);
+    else {
+        std::cout << std::string(indentLevel + 1, '\t');
+        std::cout << "*" << std::endl;
+    }
+
+}
+
+void BST::remove(KeyType key)
+{
+    this->removeRec(this->root, key);
+}
+
+BST::Node* BST::removeRec(Node* pNode, KeyType key)
+{
+    if (BST::isLeaf(pNode)) return pNode;
+    if (key < pNode->key) {
+        pNode->leftChild = this->removeRec(pNode->leftChild, key);
+    } else if (key > pNode->key) {
+        pNode->rightChild = this->removeRec(pNode->rightChild, key);
+    } else {
+        if (this->isLeaf(pNode->leftChild) && this->isLeaf(pNode->rightChild)) {
+            delete pNode;
+            pNode = nullptr;
+        } else if (this->isLeaf(pNode->leftChild)) {
+            BST::Node* tmp = pNode->rightChild;
+            if (pNode == this->root) this->root = tmp;
+            delete pNode;
+            return tmp;
+        } else if (this->isLeaf(pNode->rightChild)) {
+            BST::Node* tmp = pNode->leftChild;
+            if (pNode == this->root) this->root = tmp;
+            delete pNode;
+            return tmp;
+        } else {
+            BST::Node* minNode = this->minNode(pNode->rightChild);
+            pNode->key = minNode->key;
+            pNode->item = minNode->item;
+            pNode->rightChild = this->removeRec(pNode->rightChild, key);
+        }
+    }
+    return pNode;
+}
+
+BST::~BST()
+{
+//    this->deepDelete(this->root);
+}
+
+void BST::deepDelete(Node* pNode)
+{
+    if (!this->isLeaf(pNode)) {
+        deepDelete(pNode->leftChild);
+        pNode->leftChild = this->leaf();
+        deepDelete(pNode->rightChild);
+        pNode->rightChild = this->leaf();
+
+        delete pNode;
+    }
+}
+
+BST::Node* BST::minNode(BST::Node* pNode)
+{
+    BST::Node* minNode = pNode;
+    while (!BST::isLeaf(minNode->leftChild)) {
+        minNode = minNode->leftChild;
+    }
+    return minNode;
 }
