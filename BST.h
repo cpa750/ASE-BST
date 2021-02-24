@@ -15,12 +15,17 @@ public:
 
     BST() = default;
     ~BST();
+    BST(const BST&);
+    BST(BST&&) noexcept ;
+    BST& operator=(BST&&) noexcept ;
+    BST& operator=(const BST&);
     ItemType* lookup(KeyType);
     void insert(KeyType, ItemType);
     void remove(KeyType);
     void displayEntries();
     void displayTree();
     void removeIf(const std::function<bool(KeyType)>&);
+
 
 private:
     Node* root = leaf();
@@ -35,6 +40,7 @@ private:
     Node* removeIfRec(Node*, const std::function<bool(KeyType)>&);
     void deepDelete(Node*);
     Node* minNode(Node*);
+    Node* deepCopy(Node*);
 };
 
 

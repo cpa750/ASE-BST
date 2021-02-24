@@ -25,6 +25,37 @@ struct BST::Node
     Node* rightChild;
 };
 
+BST::BST(const BST& original)
+{
+    this->root = this->deepCopy(original.root);
+}
+
+BST::BST(BST&& original) noexcept
+{
+    if (this != &original) {
+        this->deepDelete(this->root);
+        this->root = original.root;
+        original.root = BST::leaf();
+    }
+}
+
+BST& BST::operator=(BST&& original) noexcept
+{
+    if (this != &original) {
+        this->deepDelete(this->root);
+        this->root = original.root;
+        original.root = BST::leaf();
+    }
+}
+
+BST& BST::operator=(const BST& original)
+{
+    if (this != &original) {
+        this->deepDelete(this->root);
+        this->root = this->deepCopy(original.root);
+    }
+}
+
 BST::Node* BST::leaf()
 {
     return nullptr;
@@ -151,7 +182,7 @@ BST::Node* BST::removeRec(Node* pNode, KeyType key)
 
 BST::~BST()
 {
-    this->deepDelete(this->root);
+//    this->deepDelete(this->root);
 }
 
 void BST::deepDelete(Node* pNode)
@@ -186,4 +217,15 @@ BST::Node* BST::removeIfRec(Node* pNode, const std::function<bool (KeyType)>& pr
 
         if (predicate(pNode->key)) this->remove(pNode->key);
     }
+}
+
+BST::Node* BST::deepCopy(Node* pNode)
+{
+    Node* newNode = this->leaf();
+    if (!this->isLeaf(pNode)) {
+        newNode = new Node(pNode->key, pNode->item);
+        newNode->leftChild = this->deepCopy(pNode->leftChild);
+        newNode->rightChild = this->deepCopy(pNode->rightChild);
+    }
+    return newNode;
 }
