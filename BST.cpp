@@ -39,6 +39,11 @@ BST::BST(BST&& original) noexcept
     }
 }
 
+BST::~BST()
+{
+    this->deepDelete(this->root);
+}
+
 BST& BST::operator=(BST&& original) noexcept
 {
     if (this != &original) {
@@ -178,11 +183,6 @@ BST::Node* BST::removeRec(Node* pNode, KeyType key)
         }
     }
     return pNode;
-}
-
-BST::~BST()
-{
-//    this->deepDelete(this->root);
 }
 
 void BST::deepDelete(Node* pNode)

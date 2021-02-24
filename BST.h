@@ -39,7 +39,7 @@ private:
     Node* removeRec(Node*, KeyType);
     Node* removeIfRec(Node*, const std::function<bool(KeyType)>&);
     void deepDelete(Node*);
-    Node* minNode(Node*);
+    static Node* minNode(Node*);
     Node* deepCopy(Node*);
 };
 
