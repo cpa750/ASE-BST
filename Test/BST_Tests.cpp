@@ -343,3 +343,77 @@ BOOST_AUTO_TEST_SUITE( Remove_Tests )
 BOOST_AUTO_TEST_SUITE_END()
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+BOOST_AUTO_TEST_SUITE( RemoveIf_Tests )
+
+    BOOST_AUTO_TEST_CASE( RemoveNone )
+    {
+        Dict dict;
+        insertTestData(dict);
+
+        dict.removeIf([](KeyType k) {return false;});
+
+        isPresent(dict,22,"Mary");
+        isPresent(dict,4,"Stephen");
+        isPresent(dict,9,"Edward");
+        isPresent(dict,1,"William");
+        isPresent(dict,0,"Harold");
+        isPresent(dict,24,"James");
+        isPresent(dict,26,"Charles");
+        isPresent(dict,19,"Henry");
+        isPresent(dict,31,"Anne");
+        isPresent(dict,23,"Elizabeth");
+        isPresent(dict,37,"Victoria");
+        isPresent(dict,42,"Elizabeth");
+        isPresent(dict,-1,"Edward");
+    }
+
+    BOOST_AUTO_TEST_CASE( RemoveAll )
+    {
+        Dict dict;
+        insertTestData(dict);
+
+        dict.removeIf([](KeyType k) {return true;});
+
+        isAbsent(dict,22);
+        isAbsent(dict,4);
+        isAbsent(dict,9);
+        isAbsent(dict,1);
+        isAbsent(dict,0);
+        isAbsent(dict,24);
+        isAbsent(dict,26);
+        isAbsent(dict,19);
+        isAbsent(dict,31);
+        isAbsent(dict,23);
+        isAbsent(dict,37);
+        isAbsent(dict,42);
+        isAbsent(dict,-1);
+    }
+
+    BOOST_AUTO_TEST_CASE( RemoveOddKeys )
+    {
+        Dict dict;
+        insertTestData(dict);
+
+        dict.removeIf([](KeyType k) {return k%2 != 0;});
+
+        isPresent(dict,22,"Mary");
+        isPresent(dict,4,"Stephen");
+        isPresent(dict,0,"Harold");
+        isPresent(dict,24,"James");
+        isPresent(dict,26,"Charles");
+        isPresent(dict,42,"Elizabeth");
+
+        isAbsent(dict,9);
+        isAbsent(dict,1);
+        isAbsent(dict,19);
+        isAbsent(dict,31);
+        isAbsent(dict,23);
+        isAbsent(dict,37);
+        isAbsent(dict,-1);
+    }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+////////////////////////////////////////////////////////////////////////////////

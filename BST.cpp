@@ -127,6 +127,7 @@ BST::Node* BST::removeRec(Node* pNode, KeyType key)
     } else {
         if (this->isLeaf(pNode->leftChild) && this->isLeaf(pNode->rightChild)) {
             delete pNode;
+            if (pNode == this->root) this->root = this->leaf();
             pNode = nullptr;
         } else if (this->isLeaf(pNode->leftChild)) {
             BST::Node* tmp = pNode->rightChild;
@@ -150,16 +151,14 @@ BST::Node* BST::removeRec(Node* pNode, KeyType key)
 
 BST::~BST()
 {
-//    this->deepDelete(this->root);
+    this->deepDelete(this->root);
 }
 
 void BST::deepDelete(Node* pNode)
 {
     if (!this->isLeaf(pNode)) {
         deepDelete(pNode->leftChild);
-        pNode->leftChild = this->leaf();
         deepDelete(pNode->rightChild);
-        pNode->rightChild = this->leaf();
 
         delete pNode;
     }
@@ -172,4 +171,19 @@ BST::Node* BST::minNode(BST::Node* pNode)
         minNode = minNode->leftChild;
     }
     return minNode;
+}
+
+void BST::removeIf(const std::function<bool (KeyType)>& predicate)
+{
+    this->removeIfRec(this->root, predicate);
+}
+
+BST::Node* BST::removeIfRec(Node* pNode, const std::function<bool (KeyType)>& predicate)
+{
+    if (!this->isLeaf(pNode)) {
+        this->removeIfRec(pNode->leftChild, predicate);
+        this->removeIfRec(pNode->rightChild, predicate);
+
+        if (predicate(pNode->key)) this->remove(pNode->key);
+    }
 }

@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include <functional>
 
 class BST
 {
@@ -19,6 +20,7 @@ public:
     void remove(KeyType);
     void displayEntries();
     void displayTree();
+    void removeIf(const std::function<bool(KeyType)>&);
 
 private:
     Node* root = leaf();
@@ -30,6 +32,7 @@ private:
     void displayEntriesRec(Node*);
     void displayTreeRec(Node*, int);
     Node* removeRec(Node*, KeyType);
+    Node* removeIfRec(Node*, const std::function<bool(KeyType)>&);
     void deepDelete(Node*);
     Node* minNode(Node*);
 };
